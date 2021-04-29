@@ -1,0 +1,3 @@
+# since this repo doesn't actually contain the source for what we're releasing,
+# let's not make an archive that contains these files.
+* export-ignore

@@ -1,0 +1,5 @@
+.vscode/
+
+build/src/
+installer/out/
+installer/src/bin/

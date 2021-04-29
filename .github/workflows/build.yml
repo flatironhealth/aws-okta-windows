@@ -1,0 +1,61 @@
+name: Build
+on:
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: The version tag to build
+        required: false
+  schedule:
+    - cron: '0 8,12,16 * * 1-5'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Initialize tag via latest release
+        if: github.event_name != 'workflow_dispatch' or github.event.inputs.version_tag == ''
+        run: |
+          VER_TAG=$(curl -fs -o/dev/null -w %{redirect_url} https://github.com/segmentio/aws-okta/releases/latest)
+          echo "VER_TAG=${VER_TAG}" >> $GITHUB_ENV
+
+      - name: Initialize tag via manual dispatch
+        if: github.event_name == 'workflow_dispatch' and github.event.inputs.version_tag != ''
+        run: |
+          echo "VER_TAG=${{ github.event.inputs.version_tag }}" >> $GITHUB_ENV
+
+      - name: Ensure VER_TAG is set
+        if: "'${{ env.VER_TAG }}' == ''"
+        run: |
+          echo "VER_TAG is not set"
+          exit 1
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.13
+
+      - name: Build binary and installer
+        run: make installer
+
+      # - name: Upload Asset
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: aws-okta.exe
+      #     asset_name: aws-okta.exe
+      #     # asset_content_type: application/gzip
+      #     asset_content_type: application/vnd.microsoft.portable-executable
+
+      # - name: Upload binaries to release
+      #   uses: svenstaro/upload-release-action@v2
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: aws-okta.exe
+      #     asset_name: aws-okta.exe
+      #     tag: ${{ env.VER_TAG }}
+      #     overwrite: true
