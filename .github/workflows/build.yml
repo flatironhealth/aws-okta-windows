@@ -51,7 +51,21 @@ jobs:
         working-directory: build
         run: make REPOSITORY=${AWS_OKTA_REPOSITORY} VERSION=${VER_TAG} WIXIMG=${WIXIMG} installer
 
-      # - name: Upload Asset
+      - name: Create a Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: aws-okta ${{ env.VER_TAG }}
+          tag_name: ${{ env.VER_TAG }}
+          files: |
+            installer/src/bin/*.exe
+            installer/out/*.msi
+          body: |
+            Windows amd64 release of `aws-okta` via `${{ env.VER_TAG }}`
+            ${{ env.AWS_OKTA_REPOSITORY }}/tree/${{ env.VER_TAG }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          # - name: Upload Asset
       #   uses: actions/upload-release-asset@v1
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
