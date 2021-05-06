@@ -5,7 +5,7 @@ on:
       version_tag:
         description: The version tag to build
         required: false
-  schedule:
+  # schedule:
     # - cron: '*/5 */1 * * 1-5'
     # - cron: '0 8,12,16 * * 1-5'
 env:
