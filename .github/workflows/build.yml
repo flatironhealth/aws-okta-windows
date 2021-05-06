@@ -6,25 +6,28 @@ on:
         description: The version tag to build
         required: false
   schedule:
-    - cron: '0 8,12,16 * * 1-5'
+    - cron: '*/5 */1 * * 1-5'
+    # - cron: '0 8,12,16 * * 1-5'
+env:
+  AWS_OKTA_REPOSITORY: https://github.com/segmentio/aws-okta
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Initialize tag via latest release
-        if: github.event_name != 'workflow_dispatch' or github.event.inputs.version_tag == ''
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.version_tag == ''
         run: |
-          VER_TAG=$(curl -fs -o/dev/null -w %{redirect_url} https://github.com/segmentio/aws-okta/releases/latest)
+          VER_TAG=$(curl -fs -o/dev/null -w %{redirect_url} ${AWS_OKTA_REPOSITORY}/releases/latest)
           echo "VER_TAG=${VER_TAG}" >> $GITHUB_ENV
 
       - name: Initialize tag via manual dispatch
-        if: github.event_name == 'workflow_dispatch' and github.event.inputs.version_tag != ''
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.version_tag != ''
         run: |
           echo "VER_TAG=${{ github.event.inputs.version_tag }}" >> $GITHUB_ENV
 
       - name: Ensure VER_TAG is set
-        if: "'${{ env.VER_TAG }}' == ''"
+        if: ${{ env.VER_TAG == '' }}
         run: |
           echo "VER_TAG is not set"
           exit 1
@@ -38,7 +41,7 @@ jobs:
           go-version: ^1.13
 
       - name: Build binary and installer
-        run: make installer
+        run: make REPOSITORY=${AWS_OKTA_REPOSITORY} VERSION=${VER_TAG} installer
 
       # - name: Upload Asset
       #   uses: actions/upload-release-asset@v1
