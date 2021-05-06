@@ -58,8 +58,8 @@ jobs:
       - name: set installer permissions
         working-directory: installer
         run: |
-          chgrp -R 1001 .
-          chmod -R g+rw .
+          # chgrp -R 1001 .
+          chmod -R o+rw .
 
 
       - name: Build binary and installer
