@@ -46,12 +46,19 @@ jobs:
         working-directory: installer
         run: chmod -R o+rw .
 
+      - name: Check for an existing release
+        run: >-
+          curl -fs -o/dev/null -w %{redirect_url} $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/$VER_TAG
+          && echo "HAS_RELEASE=1" >> $GITHUB_ENV
+          || echo "HAS_RELEASE=0" >> $GITHUB_ENV
 
       - name: Build binary and installer
+        if: ${{ env.HAS_RELEASE == '0' }}
         working-directory: build
         run: make REPOSITORY=${AWS_OKTA_REPOSITORY} VERSION=${VER_TAG} WIXIMG=${WIXIMG} installer
 
       - name: Create a Release
+        if: ${{ env.HAS_RELEASE == '0' }}
         uses: softprops/action-gh-release@v1
         with:
           name: aws-okta ${{ env.VER_TAG }}
