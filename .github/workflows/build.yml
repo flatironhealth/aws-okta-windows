@@ -18,7 +18,7 @@ jobs:
       - name: Initialize tag via latest release
         if: github.event_name != 'workflow_dispatch' || github.event.inputs.version_tag == ''
         run: |
-          VER_TAG=$(curl -fs -o/dev/null -w %{redirect_url} ${AWS_OKTA_REPOSITORY}/releases/latest)
+          VER_TAG=$(basename $(curl -fs -o/dev/null -w %{redirect_url} ${AWS_OKTA_REPOSITORY}/releases/latest))
           echo "VER_TAG=${VER_TAG}" >> $GITHUB_ENV
 
       - name: Initialize tag via manual dispatch
@@ -41,6 +41,7 @@ jobs:
           go-version: ^1.13
 
       - name: Build binary and installer
+        working-directory: build
         run: make REPOSITORY=${AWS_OKTA_REPOSITORY} VERSION=${VER_TAG} installer
 
       # - name: Upload Asset
