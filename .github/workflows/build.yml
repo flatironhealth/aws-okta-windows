@@ -5,9 +5,9 @@ on:
       version_tag:
         description: The version tag to build
         required: false
-  # schedule:
-    # - cron: '*/5 */1 * * 1-5'
-    # - cron: '0 8,12,16 * * 1-5'
+  schedule:
+    # run M-F, at 12/16/20:00 UTC (7/8am, 11a/12p, 3/4pm EST/EDT)
+    - cron: '0 12,16,20 * * 1-5'
 env:
   AWS_OKTA_REPOSITORY: https://github.com/segmentio/aws-okta
   WIXIMG: dactiv/wix
@@ -71,23 +71,3 @@ jobs:
             ${{ env.AWS_OKTA_REPOSITORY }}/tree/${{ env.VER_TAG }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-          # - name: Upload Asset
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: aws-okta.exe
-      #     asset_name: aws-okta.exe
-      #     # asset_content_type: application/gzip
-      #     asset_content_type: application/vnd.microsoft.portable-executable
-
-      # - name: Upload binaries to release
-      #   uses: svenstaro/upload-release-action@v2
-      #   with:
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     file: aws-okta.exe
-      #     asset_name: aws-okta.exe
-      #     tag: ${{ env.VER_TAG }}
-      #     overwrite: true
