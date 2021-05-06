@@ -53,7 +53,14 @@ jobs:
       - name: Build wix container
         working-directory: dockerwix
         run: |
-          docker build . --tag ${WIXIMG} --build-arg wine_uid=0 --build-arg wine_gid=0
+          docker build . --tag ${WIXIMG} --build-arg wine_uid=1001 --build-arg wine_gid=1001
+
+      - name: set installer permissions
+        working-directory: installer
+        run: |
+          chgrp -R 1001 .
+          chmod -R g+rw .
+
 
       - name: Build binary and installer
         working-directory: build
