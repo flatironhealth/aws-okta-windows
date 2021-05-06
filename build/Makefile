@@ -33,4 +33,4 @@ src/dist/$(BINARY): | checkout
 $(INSTALLER)/out/aws-okta-$(VERSION_NO_V).msi: build
 	mkdir -p $(INSTALLER)/src/bin
 	cp  src/dist/$(BINARY) $(INSTALLER)/src/bin/
-	cat $(INSTALLER)/wix.sh | docker run --rm -i -e VER=$(VERSION_NO_V) -v $(INSTALLER):/wix $(WIXIMG) /bin/sh
+	cat $(INSTALLER)/wix.sh | docker run ${DOCKER_RUN_ARGS} --rm -i -e VER=$(VERSION_NO_V) -v $(INSTALLER):/wix $(WIXIMG) /bin/sh
