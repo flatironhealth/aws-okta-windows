@@ -41,28 +41,28 @@ jobs:
         with:
           go-version: ^1.13
 
-      - name: Checkout wix repository
-        uses: actions/checkout@v2
-        with:
-          repository: dactivllc/docker-wix
-          path: dockerwix
+      # - name: Checkout wix repository
+      #   uses: actions/checkout@v2
+      #   with:
+      #     repository: dactivllc/docker-wix
+      #     path: dockerwix
 
-      - uses: satackey/action-docker-layer-caching@v0.0.11
-        continue-on-error: true
+      # - uses: satackey/action-docker-layer-caching@v0.0.11
+      #   continue-on-error: true
 
-      - name: Build wix container
-        working-directory: dockerwix
-        run: |
-          docker build . --tag ${WIXIMG} --build-arg wine_uid=1001 --build-arg wine_gid=1001
+      # - name: Build wix container
+      #   working-directory: dockerwix
+      #   run: |
+      #     docker build . --tag ${WIXIMG} --build-arg wine_uid=1001 --build-arg wine_gid=1001
 
-      - name: set installer permissions
+      - name: set installer directory permissions
         working-directory: installer
-        run: |
-          # chgrp -R 1001 .
-          chmod -R o+rw .
+        run: chmod -R o+rw .
 
 
       - name: Build binary and installer
+        env:
+          WIXIMG: dactiv/wix
         working-directory: build
         run: make REPOSITORY=${AWS_OKTA_REPOSITORY} VERSION=${VER_TAG} WIXIMG=${WIXIMG} installer
 
