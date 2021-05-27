@@ -5,9 +5,10 @@ on:
       version_tag:
         description: The version tag to build
         required: false
-  schedule:
+  # schedule:
     # run M-F, at 12/16/20:00 UTC (7/8am, 11a/12p, 3/4pm EST/EDT)
-    - cron: '0 12,16,20 * * 1-5'
+    # - cron: '0 12,16,20 * * 1-5'
+    # the aws-okta repo is now archived and read-only so unless we start reading from a fork, we don't need a cron
 env:
   AWS_OKTA_REPOSITORY: https://github.com/segmentio/aws-okta
   WIXIMG: dactiv/wix
